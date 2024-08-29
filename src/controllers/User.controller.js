@@ -112,15 +112,18 @@ export async function addMoney(req, res) {
     const { money } = req.body;
     const key = req.body.email;
 
-    const data = await redisClient.hSet(key, {
-      amount: money,
-    });
+    let currentAmount = await redisClient.hGetAll(key);
+    currentAmount = currentAmount.amount;
+    currentAmount = parseFloat(currentAmount);
+    let newAmont = currentAmount + money;
 
-    const amount = await redisClient.hGetAll(key);
+    const data = await redisClient.hSet(key, {
+      amount: newAmont,
+    });
 
     return res.status(200).json({
       message: 'Money added successfully',
-      amount: amount.amount,
+      amount: newAmont,
     });
   } catch (error) {
     res.status(500).json({
