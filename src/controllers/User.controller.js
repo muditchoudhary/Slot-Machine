@@ -37,8 +37,10 @@ export async function register(req, res) {
       fullName: fullName,
       email: email,
       password: hasedPassword,
+      amount: 0,
     });
 
+    const user = await redisClient.hGetAll(email);
     const tokenObject = issueJWT(data);
 
     return res.status(200).json({
@@ -46,9 +48,10 @@ export async function register(req, res) {
       token: tokenObject.token,
       expiresIn: tokenObject.expires,
       user: {
-        id: id,
-        fullName: fullName,
-        email: email,
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        amount: user.amount,
       },
     });
   } catch (error) {
@@ -94,6 +97,7 @@ export async function login(req, res) {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
+        amount: user.amount,
       },
     });
   } catch (error) {
