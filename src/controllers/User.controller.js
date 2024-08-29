@@ -116,8 +116,11 @@ export async function addMoney(req, res) {
       amount: money,
     });
 
+    const amount = await redisClient.hGetAll(key);
+
     return res.status(200).json({
       message: 'Money added successfully',
+      amount: amount.amount,
     });
   } catch (error) {
     res.status(500).json({
