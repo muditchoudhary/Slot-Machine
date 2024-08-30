@@ -38,6 +38,11 @@ export async function register(req, res) {
       email: email,
       password: hasedPassword,
       amount: 0,
+      betAmount: 0,
+      winBet: 0,
+      payout: 0,
+      looseBet: 0,
+      createdAt: new Date().toISOString(),
     });
 
     const user = await redisClient.hGetAll(email);
@@ -52,6 +57,7 @@ export async function register(req, res) {
         fullName: user.fullName,
         email: user.email,
         amount: user.amount,
+        betAmount: user.betAmount,
       },
     });
   } catch (error) {
@@ -109,13 +115,34 @@ export async function login(req, res) {
 
 export async function addMoney(req, res) {
   try {
-    const { money } = req.body;
+    let { money } = req.body;
+
     const key = req.body.email;
+
+    money = parseFloat(money);
+
+    if (isNaN(money)) {
+      return res.status(400).json({
+        message: 'Invalid money value',
+      });
+    }
+
+    if (money == 0) {
+      return res.status(400).json({
+        message: 'Amount cannot be zero',
+      });
+    }
 
     let currentAmount = await redisClient.hGetAll(key);
     currentAmount = currentAmount.amount;
+
     currentAmount = parseFloat(currentAmount);
     let newAmont = currentAmount + money;
+
+    if (isNaN(newAmont))
+      return res.status(400).json({
+        message: 'Invalid amount',
+      });
 
     const data = await redisClient.hSet(key, {
       amount: newAmont,

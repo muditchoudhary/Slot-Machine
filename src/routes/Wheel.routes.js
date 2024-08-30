@@ -4,6 +4,7 @@ import { authentication } from '../Config/authentication.js';
 
 const router = express();
 
-router.get('/spin', authentication, spinWheel);
+router.post('/spin', authentication, spinWheel);
+// router.get('/deductMoney', authentication, deductMoney);
 
 export default router;

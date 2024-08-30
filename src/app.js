@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import process from 'process';
 import userRoutes from './routes/User.routes.js';
 import wheelRoutes from './routes/Wheel.routes.js';
+import adminRoutes from './routes/Admin.routes.js';
 
 dotenv.config();
 const redisClient = createClient();
@@ -19,6 +20,7 @@ const port = process.env.PORT || 5000;
 
 app.use('/user', userRoutes);
 app.use('/wheel', wheelRoutes);
+app.use('/admin', adminRoutes);
 
 redisClient.on('ready', () => {
   console.log('Redis Connected!');
