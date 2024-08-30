@@ -10,6 +10,11 @@ const redisClient = createClient();
 
 redisClient.connect();
 
+function isValidDecimal(value) {
+  const decimalPattern = /^[+-]?(\d+(\.\d*)?|\.\d+)$/;
+  return decimalPattern.test(value);
+}
+
 export async function register(req, res) {
   try {
     const { fullName, email, password } = req.body;
@@ -133,8 +138,8 @@ export async function addMoney(req, res) {
       });
     }
 
-    let currentAmount = await redisClient.hGetAll(key);
-    currentAmount = currentAmount.amount;
+    let user = await redisClient.hGetAll(key);
+    let currentAmount = user.amount;
 
     currentAmount = parseFloat(currentAmount);
     let newAmont = currentAmount + money;
@@ -150,6 +155,8 @@ export async function addMoney(req, res) {
 
     return res.status(200).json({
       message: 'Money added successfully',
+      fullName: user.fullName,
+      email: user.email,
       amount: newAmont,
     });
   } catch (error) {
