@@ -49,6 +49,10 @@ function calculatePayout(spinResult, betAmount) {
   return winAmount;
 }
 
+function isDecimal(value) {
+  return value % 1 !== 0;
+}
+
 export async function spinWheel(req, res) {
   try {
     let { email, betAmount } = req.body;
@@ -72,9 +76,9 @@ export async function spinWheel(req, res) {
         message: 'Invalid amount currentAmount or betAmount',
       });
 
-    if (betAmount == 0)
+    if (betAmount == 0 || isDecimal(betAmount))
       return res.status(400).json({
-        message: 'Bet Amount Cannot be zero',
+        message: 'Bet Amount Cannot be zero or decimal',
       });
 
     if (currentAmount < betAmount)

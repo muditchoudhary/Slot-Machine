@@ -10,9 +10,8 @@ const redisClient = createClient();
 
 redisClient.connect();
 
-function isValidDecimal(value) {
-  const decimalPattern = /^[+-]?(\d+(\.\d*)?|\.\d+)$/;
-  return decimalPattern.test(value);
+function isDecimal(value) {
+  return value % 1 !== 0;
 }
 
 export async function register(req, res) {
@@ -126,7 +125,7 @@ export async function addMoney(req, res) {
 
     money = parseFloat(money);
 
-    if (isNaN(money)) {
+    if (isNaN(money) || isDecimal(money)) {
       return res.status(400).json({
         message: 'Invalid money value',
       });
