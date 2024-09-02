@@ -78,6 +78,8 @@ export async function userList(req, res) {
     res.status(200).json({
       message: 'Users fetched',
       users: result,
+      totalBet: totalBetAmount,
+      totalPayout: totalPayout,
       profit: totalProfit,
     });
   } catch (error) {
